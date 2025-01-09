@@ -14,13 +14,19 @@ defined('ROOTPATH') or exit('Access Denied!');
  */
 class Request
 {
-    /** check which post method was used **/
+    /**
+     * @return string
+     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+     */
     public function method(): string
     {
         return $_SERVER['REQUEST_METHOD'];
     }
 
-    /** check if something was posted **/
+    /**
+     * @return bool
+     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+     */
     public function posted(): bool
     {
         if ($_SERVER['REQUEST_METHOD'] == "POST" && count($_POST) > 0) {
@@ -31,7 +37,12 @@ class Request
     }
 
 
-    /** get a value from the POST variable **/
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+     */
     public function post(string $key = '', mixed $default = ''): mixed
     {
         if (empty($key)) {
@@ -43,7 +54,12 @@ class Request
         return $default;
     }
 
-    /** get a value from the FILES variable **/
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+     */
     public function files(string $key = '', mixed $default = ''): mixed
     {
         if (empty($key)) {
@@ -55,7 +71,12 @@ class Request
         return $default;
     }
 
-    /** get a value from the GET variable **/
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+     */
     public function get(string $key = '', mixed $default = ''): mixed
     {
         if (empty($key)) {
@@ -67,7 +88,12 @@ class Request
         return $default;
     }
 
-    /** get a value from the REQUEST variable **/
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+     */
     public function input(string $key, mixed $default = ''): mixed
     {
         if (isset($_REQUEST[$key])) {
@@ -77,7 +103,10 @@ class Request
         return $default;
     }
 
-    /** get all values from the REQUEST variable **/
+    /**
+     * @return mixed
+     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+     */
     public function all(): mixed
     {
         return $_REQUEST;
