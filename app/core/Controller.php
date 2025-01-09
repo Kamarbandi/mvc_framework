@@ -2,10 +2,14 @@
 
 declare(strict_types=1);
 
+namespace Controller;
+
+defined('ROOTPATH') OR exit('Access Denied!');
+
 /**
  * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
  */
-trait Controller
+trait MainController
 {
 
     /**

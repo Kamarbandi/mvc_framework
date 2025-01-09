@@ -1,5 +1,11 @@
 <?php
 
+namespace Model;
+
+use Exception;
+
+defined('ROOTPATH') OR exit('Access Denied!');
+
 /**
  * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
  */

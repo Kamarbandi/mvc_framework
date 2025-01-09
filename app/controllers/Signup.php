@@ -2,12 +2,18 @@
 
 declare(strict_types=1);
 
+namespace Controller;
+
+use Core\MainController;
+
+defined('ROOTPATH') OR exit('Access Denied!');
+
 /**
  * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
  */
 class Signup
 {
-    use Controller;
+    use MainController;
 
     /**
      * @return void

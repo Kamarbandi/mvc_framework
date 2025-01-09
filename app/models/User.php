@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+namespace Model;
+
+defined('ROOTPATH') OR exit('Access Denied!');
+
 /**
  * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
  */

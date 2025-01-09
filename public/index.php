@@ -1,6 +1,16 @@
-<?php 
+<?php
+
+use Core\App;
 
 session_start();
+
+$minPHPVersion = '8.0';
+if (phpversion() < $minPHPVersion)
+{
+    die("PHP version must be {$minPHPVersion} or higher. Current version is " . phpversion());
+}
+
+define('ROOTPATH', __DIR__ . DIRECTORY_SEPARATOR);
 
 require "../app/core/init.php";
 
