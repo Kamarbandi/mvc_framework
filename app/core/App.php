@@ -2,6 +2,10 @@
 
 declare(strict_types=1);
 
+namespace Core;
+
+defined('ROOTPATH') OR exit('Access Denied!');
+
 /**
  * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
  */
@@ -37,13 +41,12 @@ class App
             $this->controller = $controllerName;
             unset($urlParts[0]);
         } else {
-
             $filename = "../app/controllers/NotFound.php";
             require $filename;
             $this->controller = "NotFound";
         }
 
-        $controllerInstance  = new $this->controller;
+        $controllerInstance  = new ('\Controller\\'.$this->controller);
 
         if (!empty($urlParts[1])) {
             if (method_exists($controllerInstance , $urlParts[1])) {

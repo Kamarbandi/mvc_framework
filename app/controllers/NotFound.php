@@ -1,11 +1,17 @@
 <?php
 
+namespace Controller;
+
+use Core\MainController;
+
+defined('ROOTPATH') OR exit('Access Denied!');
+
 /**
  * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
  */
 class NotFound
 {
-	use Controller;
+	use MainController;
 
     /**
      * @return void

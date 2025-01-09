@@ -2,12 +2,18 @@
 
 declare(strict_types=1);
 
+namespace Controller;
+
+use Model\User;
+
+defined('ROOTPATH') OR exit('Access Denied!');
+
 /**
  * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
  */
 class Login
 {
-    use Controller;
+    use MainController;
 
     /**
      * @return void
@@ -18,6 +24,7 @@ class Login
         $data = [];
 
         if ($_SERVER['REQUEST_METHOD'] == "POST") {
+
             $user = new User;
             $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
             $password = $_POST['password'] ?? '';

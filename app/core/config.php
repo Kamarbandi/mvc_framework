@@ -1,5 +1,7 @@
 <?php
 
+defined('ROOTPATH') OR exit('Access Denied!');
+
 if ($_SERVER['SERVER_NAME'] == 'mvc.de') {
     define('DATABASE_NAME', 'mvc_db');
     define('DB_HOST', 'localhost');

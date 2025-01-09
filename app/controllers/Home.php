@@ -2,12 +2,16 @@
 
 declare(strict_types=1);
 
+namespace Controller;
+
+defined('ROOTPATH') OR exit('Access Denied!');
+
 /**
  * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
  */
 class Home
 {
-    use Controller;
+    use MainController;
 
     /**
      * @return void

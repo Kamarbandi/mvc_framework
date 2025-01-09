@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+namespace Model;
+
+use Exception;
+use PDO;
+use PDOException;
+
+defined('ROOTPATH') OR exit('Access Denied!');
+
 /**
  * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
  */
