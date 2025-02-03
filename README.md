@@ -38,3 +38,7 @@ This is my custom PHP framework, built to demonstrate my coding skills and under
     
     Other
       list:migrations    Lists all available migration files.
+
+
+## example
+php azad make:controller Post
