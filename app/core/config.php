@@ -1,25 +1,29 @@
 <?php
 
-defined('ROOTPATH') OR exit('Access Denied!');
+defined('ROOT_PATH') or exit('Access Denied!');
 
-if ($_SERVER['SERVER_NAME'] == 'mvc.de') {
-    define('DATABASE_NAME', 'mvc_db');
+if ((empty($_SERVER['SERVER_NAME']) && php_sapi_name() == 'cli') || (!empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] == 'localhost')) {
+    /** database config **/
+    define('DB_NAME', 'mvc_db');
     define('DB_HOST', 'localhost');
-    define('USER_NAME', 'root');
-    define('PASSWORD', '');
-    define('DBDRIVER', '');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+    define('DB_DRIVER', '');
 
-    define('ROOT', 'http://mvc.de/public');
+    define('ROOT', 'http://mvc.de/public/');
+
 } else {
-    define('DATABASE_NAME', 'your_db');
+    define('DB_NAME', 'mvc_db');
     define('DB_HOST', 'localhost');
-    define('USER_NAME', 'root');
-    define('PASSWORD', '');
-    define('DBDRIVER', '');
-    define('ROOT', 'https://domain_name.com');
+    define('DB_USER', 'root');
+    define('DB_PASS', '');
+    define('DB_DRIVER', '');
+
+    define('ROOT', 'https://your_domain.com');
 }
 
-define('APP_NAME', "MVC");
-define('APP_DESC', "Mini Framework");
+define('APP_NAME', "Give here name of application");
+define('APP_DESC', "Give here description of application");
 
+/** true means show errors **/
 define('DEBUG', true);

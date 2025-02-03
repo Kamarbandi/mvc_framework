@@ -18,6 +18,3 @@ This is my custom PHP framework, built to demonstrate my coding skills and under
 2. Set up your database and configure the connection in the `config.php` file.
 3. Start creating your models, controllers, and views in the respective directories.
 4. Follow the MVC pattern to build your application.
-
-## License
-This project is open-source. Feel free to use and modify it in your projects. Contributions are welcome!

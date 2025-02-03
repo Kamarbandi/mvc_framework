@@ -1,28 +1,18 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Controller;
 
-defined('ROOTPATH') OR exit('Access Denied!');
+defined('ROOT_PATH') or exit('Access Denied!');
 
 /**
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+ * home class
  */
 class Home
 {
     use MainController;
 
-    /**
-     * @return void
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
-    public function index(): void
+    public function index()
     {
-        $data['username'] = isset($_SESSION['USER']) && !empty($_SESSION['USER']->email)
-            ? $_SESSION['USER']->email
-            : 'User';
-
-        $this->view('home', $data);
+        $this->view('home', ['title' => 'Home']);
     }
 }

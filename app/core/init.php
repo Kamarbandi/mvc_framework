@@ -1,20 +1,12 @@
-<?php
+<?php 
 
-defined('ROOTPATH') OR exit('Access Denied!');
+defined('ROOT_PATH') OR exit('Access Denied!');
 
-spl_autoload_register(function ($classname) {
-    $classname = explode("\\", $classname);
-    $classname = end($classname);
-    $filename = "../app/models/" . ucfirst($classname) . ".php";
+spl_autoload_register(function($classname){
 
-    if (file_exists($filename)) {
-        require $filename;
-    } else {
-        error_log("Class file for {$classname} not found: {$filename}",
-            3,
-            'C:\wamp64\www\mvc\public\logs\my_errors.log');
-        throw new Exception("Class {$classname} could not be loaded from {$filename}");
-    }
+	$classname = explode("\\", $classname);
+	$classname = end($classname);
+	require $filename = "../app/models/".ucfirst($classname).".php";
 });
 
 require 'config.php';

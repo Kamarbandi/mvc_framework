@@ -1,12 +1,13 @@
 <?php
 
-defined('ROOTPATH') or exit('Access Denied!');
+defined('ROOT_PATH') or exit('Access Denied!');
 
 /** check which php extensions are required **/
-checkExtensions();
-function checkExtensions()
+check_extensions();
+function check_extensions()
 {
-    $requiredExtensions = [
+
+    $required_extensions = [
         'gd',
         'mysqli',
         'pdo_mysql',
@@ -18,84 +19,59 @@ function checkExtensions()
         'mbstring',
     ];
 
-    $notLoaded = [];
+    $not_loaded = [];
 
-    foreach ($requiredExtensions as $ext) {
+    foreach ($required_extensions as $ext) {
+
         if (!extension_loaded($ext)) {
-            $notLoaded[] = $ext;
+            $not_loaded[] = $ext;
         }
     }
 
-    if (!empty($notLoaded)) {
-        show("The loading the following extensions is necessary in your php.ini file: <br>" . implode("<br>", $notLoaded));
+    if (!empty($not_loaded)) {
+        show("Please load the following extensions in your php.ini file: <br>" . implode("<br>", $not_loaded));
         die;
     }
 }
 
-/**
- * @param mixed $stuff - The variable to be displayed.
- * @return void
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
- */
-function show(mixed $stuff)
+
+function show($stuff)
 {
     echo "<pre>";
     print_r($stuff);
     echo "</pre>";
 }
 
-/**
- * @param string $str - The string to be escaped.
- * @return string
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
- */
-function esc(string $str): string
+function esc($str)
 {
     return htmlspecialchars($str);
 }
 
-/**
- * @param $path
- * @return void
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
- */
-function redirect($path): void
+function redirect($path)
 {
-    $url = ROOT . "/" . ltrim($path, '/');
-    header("Location: " . $url);
+    header("Location: " . ROOT . "/" . $path);
     die;
 }
 
-/**
- * load image. if not exist, load placeholder
- *
- * @param mixed $file
- * @param string $type
- * @return string
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
- */
+/** load image. if not exist, load placeholder **/
 function get_image(mixed $file = '', string $type = 'post'): string
 {
+
     $file = $file ?? '';
     if (file_exists($file)) {
         return ROOT . "/" . $file;
     }
 
     if ($type == 'user') {
-        return ROOT . "/assets/images/user.png";
+        return ROOT . "/assets/images/user.webp";
     } else {
-        return ROOT . "/assets/images/no_image.png";
+        return ROOT . "/assets/images/no_image.jpg";
     }
 
 }
 
 
-/**
- * returns pagination links
- *
- * @return array
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
- */
+/** returns pagination links **/
 function get_pagination_vars(): array
 {
     $vars = [];
@@ -108,31 +84,56 @@ function get_pagination_vars(): array
 }
 
 
-/**
- * saves or displays a saved message to the user
- *
- * @param string|null $msg
- * @param bool $clear
- * @return false
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
- */
+/** saves or displays a saved message to the user **/
 function message(string $msg = null, bool $clear = false)
 {
-    $ses = new Model\Session();
+    $ses = new Core\Session();
 
     if (!empty($msg)) {
         $ses->set('message', $msg);
-    } else if (!empty($ses->get('message'))) {
+    } else
+        if (!empty($ses->get('message'))) {
 
-        $msg = $ses->get('message');
+            $msg = $ses->get('message');
 
-        if ($clear) {
-            $ses->pop('message');
+            if ($clear) {
+                $ses->pop('message');
+            }
+            return $msg;
         }
-        return $msg;
-    }
 
     return false;
+}
+
+/** return URL variables **/
+function URL($key): mixed
+{
+    $URL = $_GET['url'] ?? 'home';
+    $URL = explode("/", trim($URL, "/"));
+
+    switch ($key) {
+        case 'page':
+        case 0:
+            return $URL[0] ?? null;
+            break;
+        case 'section':
+        case 'slug':
+        case 1:
+            return $URL[1] ?? null;
+            break;
+        case 'action':
+        case 2:
+            return $URL[2] ?? null;
+            break;
+        case 'id':
+        case 3:
+            return $URL[3] ?? null;
+            break;
+        default:
+            return null;
+            break;
+    }
+
 }
 
 
@@ -155,7 +156,7 @@ function old_checked(string $key, string $value, string $default = ""): string
 }
 
 
-function old_value(string $key, mixed $default = "", string $mode = 'post'): mixed
+function getOldValue(string $key, mixed $default = "", string $mode = 'post'): mixed
 {
     $POST = ($mode == 'post') ? $_POST : $_GET;
     if (isset($POST[$key])) {
@@ -188,7 +189,6 @@ function get_date($date)
 }
 
 
-/** comverts image paths from relative to absolute **/
 function add_root_to_images($contents)
 {
 
@@ -209,7 +209,6 @@ function add_root_to_images($contents)
     return $contents;
 }
 
-/** converts images from text editor content to actual files **/
 function remove_images_from_content($content, $folder = "uploads/")
 {
 
@@ -260,7 +259,6 @@ function remove_images_from_content($content, $folder = "uploads/")
 
 }
 
-/** deletes images from text editor content **/
 function delete_images_from_content(string $content, string $content_new = ''): void
 {
 
@@ -330,35 +328,6 @@ function delete_images_from_content(string $content, string $content_new = ''): 
             }
         }
     }
-}
-
-/** return URL variables **/
-function URL($key): mixed
-{
-    $URL = $_GET['url'] ?? 'home';
-    $URL = explode("/", trim($URL, "/"));
-
-    switch ($key) {
-        case 'page':
-        case 0:
-            return $URL[0] ?? null;
-            break;
-        case 'section':
-        case 'slug':
-        case 1:
-            return $URL[1] ?? null;
-            break;
-        case 'action':
-        case 2:
-            return $URL[2] ?? null;
-            break;
-        case 'id':
-        case 3:
-            return $URL[3] ?? null;
-            break;
-        default:
-            return null;
-            break;
-    }
 
 }
+

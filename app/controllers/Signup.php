@@ -1,40 +1,27 @@
-<?php
-
-declare(strict_types=1);
+<?php 
 
 namespace Controller;
 
-use Core\MainController;
-
-defined('ROOTPATH') OR exit('Access Denied!');
+defined('ROOT_PATH') OR exit('Access Denied!');
 
 /**
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+ * signup class
  */
 class Signup
 {
-    use MainController;
+	use MainController;
 
-    /**
-     * @return void
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
-    public function index(): void
-    {
-        $data = [];
+	public function index()
+	{
 
-        if ($_SERVER['REQUEST_METHOD'] == "POST") {
-            $user = new User;
+		$data['user'] = new \Model\User;
+		$req = new \Core\Request;
+		if($req->posted())
+		{
+			$data['user']->signup($_POST);
+		}
 
-            if ($user->validate($_POST)) {
-                $_POST['password'] = password_hash($_POST['password'], PASSWORD_DEFAULT);
-                $user->insert($_POST);
-                redirect('login');
-            }
+		$this->view('signup',$data);
+	}
 
-            $data['errors'] = $user->errors;
-        }
-
-        $this->view('signup', $data);
-    }
 }

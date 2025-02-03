@@ -1,26 +1,16 @@
 <?php
 
-/**
- * Session class
- * Save or read data to the current session
- */
+namespace Core;
 
-namespace Model;
+defined('ROOT_PATH') or exit('Access Denied!');
 
-defined('ROOTPATH') or exit('Access Denied!');
-
-/**
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
- */
 class Session
 {
+
     public $mainkey = 'APP';
     public $userkey = 'USER';
 
-    /**
-     * @return int
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
+    /** activate session if not yet started **/
     private function start_session(): int
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -30,12 +20,7 @@ class Session
         return 1;
     }
 
-    /**
-     * @param mixed $keyOrArray
-     * @param mixed $value
-     * @return int
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
+    /** put data into the session **/
     public function set(mixed $keyOrArray, mixed $value = ''): int
     {
         $this->start_session();
@@ -54,12 +39,7 @@ class Session
         return 1;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
+    /** get data from the session. default is return if data not found **/
     public function get(string $key, mixed $default = ''): mixed
     {
 
@@ -72,11 +52,7 @@ class Session
         return $default;
     }
 
-    /**
-     * @param mixed $user_row
-     * @return int
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
+    /** saves the user row data into the session after a login **/
     public function auth(mixed $user_row): int
     {
         $this->start_session();
@@ -86,10 +62,7 @@ class Session
         return 0;
     }
 
-    /**
-     * @return int
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
+    /** removes user data from the session **/
     public function logout(): int
     {
         $this->start_session();
@@ -102,10 +75,7 @@ class Session
         return 0;
     }
 
-    /**
-     * @return bool
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
+    /** checks if user is logged in **/
     public function is_logged_in(): bool
     {
         $this->start_session();
@@ -118,12 +88,7 @@ class Session
         return false;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
+    /** gets data from a column in the session user data **/
     public function user(string $key = '', mixed $default = ''): mixed
     {
         $this->start_session();
@@ -131,22 +96,14 @@ class Session
         if (empty($key) && !empty($_SESSION[$this->userkey])) {
 
             return $_SESSION[$this->userkey];
-        } else
-
-            if (!empty($_SESSION[$this->userkey]->$key)) {
-
-                return $_SESSION[$this->userkey]->$key;
-            }
+        } else if (!empty($_SESSION[$this->userkey]->$key)) {
+            return $_SESSION[$this->userkey]->$key;
+        }
 
         return $default;
     }
 
-    /**
-     * @param string $key
-     * @param mixed $default
-     * @return mixed
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
+    /** returns data from a key and deletes it **/
     public function pop(string $key, mixed $default = ''): mixed
     {
         $this->start_session();
@@ -161,10 +118,7 @@ class Session
         return $default;
     }
 
-    /**
-     * @return mixed
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
+    /** returns all data from the APP array **/
     public function all(): mixed
     {
         $this->start_session();
@@ -175,5 +129,7 @@ class Session
 
         return [];
     }
+
+
 }
 

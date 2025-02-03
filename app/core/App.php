@@ -1,10 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
-namespace Core;
-
-defined('ROOTPATH') OR exit('Access Denied!');
+defined('ROOT_PATH') or exit('Access Denied!');
 
 /**
  * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
@@ -14,48 +10,36 @@ class App
     private string $controller = 'Home';
     private string $method = 'index';
 
-    /**
-     * @return string[]
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
-    private function splitURL(): array
+    private function splitURL()
     {
         $url = $_GET['url'] ?? 'home';
         return explode("/", filter_var(trim($url, "/"), FILTER_SANITIZE_URL));
     }
 
-    /**
-     * Loads the controller and calls the appropriate method.
-     *
-     * @return void
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
-    public function loadController(): void
+    public function loadController()
     {
-        $urlParts = $this->splitURL();
-        $controllerName = ucfirst($urlParts[0]);
+        $URL = $this->splitURL();
 
-        $filename = "../app/controllers/{$controllerName}.php";
-        if (file_exists($filename)) {
-            require $filename;
-            $this->controller = $controllerName;
-            unset($urlParts[0]);
+        $controllerName = ucfirst($URL[0]);
+        $controllerFile = "../app/controllers/{$controllerName}.php";
+        if (file_exists($controllerFile)) {
+            require $controllerFile;
+            $this->controller = ucfirst($URL[0]);
+            unset($URL[0]);
         } else {
-            $filename = "../app/controllers/NotFound.php";
-            require $filename;
-            $this->controller = "NotFound";
+            $controllerFile = "../app/controllers/_404.php";
+            require $controllerFile;
+            $this->controller = "_404";
         }
 
-        $controllerInstance  = new ('\Controller\\'.$this->controller);
+        $controller = new ('\Controller\\' . $this->controller);
 
-        if (!empty($urlParts[1])) {
-            if (method_exists($controllerInstance , $urlParts[1])) {
-                $this->method = $urlParts[1];
-                unset($urlParts[1]);
-            }
+        if (!empty($URL[1]) && method_exists($controller, $URL[1])) {
+            $this->method = $URL[1];
+            unset($URL[1]);
         }
 
-        call_user_func_array([$controllerInstance, $this->method], $urlParts);
+        call_user_func_array([$controller, $this->method], $URL);
     }
 }
 

@@ -1,110 +1,255 @@
 <?php
 
+/**
+ * Image manipulation class
+ */
 namespace Model;
 
-defined('ROOTPATH') OR exit('Access Denied!');
+defined('ROOT_PATH') OR exit('Access Denied!');
 
-/**
- * Class Image
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
- */
 class Image
 {
-    /**
-     * Resize an image to the specified max size while maintaining aspect ratio.
-     *
-     * @param string $filename
-     * @param int $max_size
-     * @return string
-     */
-    public function resize(string $filename, int $max_size = 700): string
-    {
-        if (!file_exists($filename)) {
-            return $filename;
-        }
+	
+	
+	public function resize($filename,$max_size = 700)
+	{
+	
+		/** check what kind of file type it is **/
+		$type = mime_content_type($filename);
 
-        $type = mime_content_type($filename);
-        $image = $this->createImageFromType($filename, $type);
+		if(file_exists($filename))
+		{
+			switch ($type) {
 
-        if (!$image) {
-            return $filename;
-        }
+				case 'image/png':
+					$image = imagecreatefrompng($filename);
+					break;
 
-        [$src_w, $src_h] = [imagesx($image), imagesy($image)];
-        [$dst_w, $dst_h] = $this->calculateDimensions($src_w, $src_h, $max_size);
+				case 'image/gif':
+					$image = imagecreatefromgif($filename);
+					break;
+				
+				case 'image/jpeg':
+					$image = imagecreatefromjpeg($filename);
+					break;
+				
+				case 'image/webp':
+					$image = imagecreatefromwebp($filename);
+					break;
+				
+				default:
+					return $filename;
+					break;
+			}
 
-        $dst_image = imagecreatetruecolor($dst_w, $dst_h);
-        if ($type === 'image/png') {
-            imagealphablending($dst_image, false);
-            imagesavealpha($dst_image, true);
-        }
+			$src_w = imagesx($image);
+			$src_h = imagesy($image);
 
-        imagecopyresampled($dst_image, $image, 0, 0, 0, 0, $dst_w, $dst_h, $src_w, $src_h);
-        imagedestroy($image);
+		    if($src_w > $src_h)
+		    {
+		      //reduce max size if image is smaller
+		      if($src_w < $max_size)
+		      {
+		        $max_size = $src_w;
+		      }
 
-        $this->saveImage($dst_image, $filename, $type);
-        imagedestroy($dst_image);
+		      $dst_w = $max_size;
+		      $dst_h = ($src_h / $src_w) * $max_size;
+		    }else{
 
-        return $filename;
-    }
+		      //reduce max size if image is smaller
+		      if($src_h < $max_size)
+		      {
+		        $max_size = $src_h;
+		      }
 
-    /**
-     * Create an image resource based on its mime type.
-     *
-     * @param string $filename
-     * @param string $type
-     * @return resource|false
-     */
-    private function createImageFromType(string $filename, string $type)
-    {
-        return match ($type) {
-            'image/png' => imagecreatefrompng($filename),
-            'image/gif' => imagecreatefromgif($filename),
-            'image/jpeg' => imagecreatefromjpeg($filename),
-            'image/webp' => imagecreatefromwebp($filename),
-            default => false,
-        };
-    }
+		      $dst_w = ($src_w / $src_h) * $max_size;
+		      $dst_h = $max_size;
+		    }
 
-    /**
-     * Calculate the new image dimensions while maintaining the aspect ratio.
-     *
-     * @param int $src_w
-     * @param int $src_h
-     * @param int $max_size
-     * @return array
-     */
-    private function calculateDimensions(int $src_w, int $src_h, int $max_size): array
-    {
-        if ($src_w > $src_h) {
-            $max_size = min($src_w, $max_size);
-            $dst_w = $max_size;
-            $dst_h = ($src_h / $src_w) * $max_size;
-        } else {
-            $max_size = min($src_h, $max_size);
-            $dst_w = ($src_w / $src_h) * $max_size;
-            $dst_h = $max_size;
-        }
+		    $dst_w = round($dst_w); 
+		    $dst_h = round($dst_h);
+		    
+			$dst_image = imagecreatetruecolor($dst_w, $dst_h);
 
-        return [round($dst_w), round($dst_h)];
-    }
+			if($type == 'image/png')
+			{
 
-    /**
-     * Save the image based on its mime type.
-     *
-     * @param resource $image
-     * @param string $filename
-     * @param string $type
-     * @return void
-     */
-    private function saveImage($image, string $filename, string $type): void
-    {
-        match ($type) {
-            'image/png' => imagepng($image, $filename, 8),
-            'image/gif' => imagegif($image, $filename),
-            'image/jpeg' => imagejpeg($image, $filename, 90),
-            'image/webp' => imagewebp($image, $filename, 90),
-            default => imagejpeg($image, $filename, 90),
-        };
-    }
+				imagealphablending($dst_image, false);
+				imagesavealpha($dst_image, true );
+			}
+
+			imagecopyresampled($dst_image, $image, 0, 0, 0, 0, $dst_w, $dst_h, $src_w, $src_h);
+
+			imagedestroy($image);
+
+			switch ($type) {
+
+				case 'image/png':
+					imagepng($dst_image,$filename,8);
+					break;
+
+				case 'image/gif':
+					imagegif($dst_image,$filename);
+					break;
+				
+				case 'image/jpeg':
+					imagejpeg($dst_image,$filename,90);
+					break;
+				
+				case 'image/webp':
+					imagewebp($dst_image,$filename,90);
+					break;
+				
+				default:
+					imagejpeg($dst_image,$filename,90);
+					break;
+			}
+
+			imagedestroy($dst_image);
+		}
+
+		return $filename;
+	}
+	
+	
+	public function crop($filename,$max_width = 700,$max_height = 700)
+	{
+	
+		/** check what kind of file type it is **/
+		$type = mime_content_type($filename);
+
+		if(file_exists($filename))
+		{
+			$imagefunc = 'imagecreatefromjpeg';
+
+			switch ($type) {
+
+				case 'image/png':
+					$image = imagecreatefrompng($filename);
+					$imagefunc = 'imagecreatefrompng';
+					break;
+
+				case 'image/gif':
+					$image = imagecreatefromgif($filename);
+					$imagefunc = 'imagecreatefromgif';
+					break;
+				
+				case 'image/jpeg':
+					$image = imagecreatefromjpeg($filename);
+					$imagefunc = 'imagecreatefromjpeg';
+					break;
+				
+				case 'image/webp':
+					$image = imagecreatefromwebp($filename);
+					$imagefunc = 'imagecreatefromwebp';
+					break;
+				
+				default:
+					return $filename;
+					break;
+			}
+
+			$src_w = imagesx($image);
+			$src_h = imagesy($image);
+
+			if($max_width > $max_height)
+			{
+				if($src_w > $src_h)
+				{
+					$max = $max_width;
+				}else{
+					$max = ($src_h / $src_w) * $max_width;
+				}
+			}else
+			{
+				if($src_w > $src_h)
+				{
+					$max = ($src_w / $src_h) * $max_height;
+				}else{
+					$max = $max_height;
+				}
+			}
+
+			$this->resize($filename,$max);
+ 
+			$image = $imagefunc($filename);
+
+			$src_w = imagesx($image);
+			$src_h = imagesy($image);
+
+			$src_x = 0;
+			$src_y = 0;
+ 			if($max_width > $max_height)
+			{
+				$src_y = round(($src_h - $max_height) / 2);
+			}else
+			{
+				$src_x = round(($src_w - $max_width) / 2);
+			}
+
+			$dst_image = imagecreatetruecolor($max_width, $max_height);
+
+			if($type == 'image/png')
+			{
+				imagealphablending($dst_image, false);
+				imagesavealpha($dst_image, true );
+			}
+
+			imagecopyresampled($dst_image, $image, 0, 0, $src_x, $src_y, $max_width, $max_height, $max_width, $max_height);
+			imagedestroy($image);
+
+			switch ($type) {
+
+				case 'image/png':
+					imagepng($dst_image,$filename,8);
+					break;
+
+				case 'image/gif':
+					imagegif($dst_image,$filename);
+					break;
+				
+				case 'image/jpeg':
+					imagejpeg($dst_image,$filename,90);
+					break;
+				
+				case 'image/webp':
+					imagewebp($dst_image,$filename,90);
+					break;
+				
+				default:
+					imagejpeg($dst_image,$filename,90);
+					break;
+			}
+
+			imagedestroy($dst_image);
+		}
+
+		return $filename;
+	}
+
+
+	public function getThumbnail($filename, $max_width = 700, $max_height = 700)
+	{
+
+		if(file_exists($filename))
+		{
+			$ext = explode(".", $filename);
+			$ext = end($ext);
+
+			$dest = preg_replace("/\.{$ext}$/", '_thumbnail.'.$ext, $filename);
+
+			if(file_exists($dest))
+			{
+				return $dest;
+			}
+			
+			copy($filename, $dest);
+			$this->crop($dest,$max_width,$max_height);
+
+			$filename = $dest;
+		}
+
+		return $filename;
+	}
 }

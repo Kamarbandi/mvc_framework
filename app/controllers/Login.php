@@ -1,51 +1,26 @@
-<?php
-
-declare(strict_types=1);
+<?php 
 
 namespace Controller;
 
-use Model\User;
-
-defined('ROOTPATH') OR exit('Access Denied!');
+defined('ROOT_PATH') OR exit('Access Denied!');
 
 /**
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+ * login class
  */
 class Login
 {
-    use MainController;
+	use MainController;
 
-    /**
-     * @return void
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
-    public function index(): void
-    {
-        $data = [];
+	public function index()
+	{
+		$data['user'] = new \Model\User;
+		$req = new \Core\Request;
+		if($req->posted())
+		{
+			$data['user']->login($_POST);
+		}
 
-        if ($_SERVER['REQUEST_METHOD'] == "POST") {
+		$this->view('login',$data);
+	}
 
-            $user = new User;
-            $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
-            $password = $_POST['password'] ?? '';
-
-            if ($email && !empty($password)) {
-                $row = $user->first(['email' => $email]);
-
-                if ($row && password_verify($password, $row->password)) {
-                    $_SESSION['USER'] = $row;
-                    redirect('home');
-                    return;
-                } else {
-                    $user->errors['email'] = "Wrong email or password";
-                }
-            } else {
-                $user->errors['email'] = "Please enter a valid email and password";
-            }
-
-            $data['errors'] = $user->errors;
-        }
-
-        $this->view('login', $data);
-    }
 }

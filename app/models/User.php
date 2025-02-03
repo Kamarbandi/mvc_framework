@@ -1,53 +1,99 @@
 <?php
 
-declare(strict_types=1);
-
 namespace Model;
 
-defined('ROOTPATH') OR exit('Access Denied!');
+defined('ROOT_PATH') or exit('Access Denied!');
 
 /**
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+ * User class
  */
 class User
 {
     use Model;
+    protected $table = 'users';
+    protected $primaryKey = 'id';
+    protected $loginUniqueColumn = 'email';
 
-    protected string $table = 'users';
+    protected $allowedColumns = [
 
-    protected array $allowedColumns = [
+        'username',
         'email',
         'password',
     ];
 
-    /**
-     * @param $data
-     * @return bool
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
-     */
-    public function validate($data): bool
+    /*****************************
+     *    rules include:
+     * required
+     * alpha
+     * email
+     * numeric
+     * unique
+     * symbol
+     * longer_than_8_chars
+     * alpha_numeric_symbol
+     * alpha_numeric
+     * alpha_symbol
+     *
+     ****************************/
+    protected $onInsertValidationRules = [
+        'email' => [
+            'email',
+            'unique',
+            'required',
+        ],
+        'username' => [
+            'alpha',
+            'required',
+        ],
+        'password' => [
+            'not_less_than_8_chars',
+            'required',
+        ],
+    ];
+
+    protected $onUpdateValidationRules = [
+        'email' => [
+            'email',
+            'unique',
+            'required',
+        ],
+        'username' => [
+            'alpha',
+            'required',
+        ],
+        'password' => [
+            'not_less_than_8_chars',
+            'required',
+        ],
+    ];
+
+    public function signup($data)
     {
-        $this->errors = [];
+        if ($this->validate($data)) {
+            $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
+            $data['date'] = date("Y-m-d H:i:s");
+            $data['date_created'] = date("Y-m-d H:i:s");
 
-        if (empty($data['email'])) {
-            $this->errors['email'] = "Email is required";
-        } else
-            if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-                $this->errors['email'] = "Email is not valid";
-            }
-
-        if (empty($data['password'])) {
-            $this->errors['password'] = "Password is required";
+            $this->insert($data);
+            redirect('login');
         }
-
-        if (empty($data['terms'])) {
-            $this->errors['terms'] = "Please accept the terms and conditions";
-        }
-
-        if (empty($this->errors)) {
-            return true;
-        }
-
-        return false;
     }
+
+    public function login($data)
+    {
+        $row = $this->first([$this->loginUniqueColumn => $data[$this->loginUniqueColumn]]);
+
+        if ($row) {
+            if (password_verify($data['password'], $row->password)) {
+                $ses = new \Core\Session;
+                $ses->auth($row);
+                redirect('home');
+            } else {
+                $this->errors[$this->loginUniqueColumn] = "Wrong $this->loginUniqueColumn or password";
+            }
+        } else {
+            $this->errors[$this->loginUniqueColumn] = "Wrong $this->loginUniqueColumn or password";
+        }
+    }
+
 }

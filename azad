@@ -1,0 +1,30 @@
+<?php
+
+if (PHP_SAPI !== 'cli') {
+    exit("Error: This tool can only be used in the command line interface.");
+}
+
+define('DIRSEP', DIRECTORY_SEPARATOR);
+define('CPATH', __DIR__ . DIRSEP);
+define('ROOT_PATH', __DIR__ . DIRSEP);
+
+chdir(CPATH);
+
+$action = $argv[1] ?? 'help';
+
+require_once 'app' . DIRSEP . 'azad' . DIRSEP . 'init.php';
+
+$kamarbandi = new \Kamarbandi\Kamarbandi;
+
+if (empty($action)) {
+    $kamarbandi->help();
+} else {
+    $parts = explode(":", $action);
+
+    if (is_callable([$kamarbandi, $parts[0]])) {
+        call_user_func_array([$kamarbandi, $parts[0]], [$argv]);
+    } else {
+        echo "\n\rIt looks like your command wasn't recognized. Please check the list of available commands below.";
+        $kamarbandi->help();
+    }
+}
