@@ -3,253 +3,256 @@
 /**
  * Image manipulation class
  */
+
 namespace Model;
 
-defined('ROOT_PATH') OR exit('Access Denied!');
+defined('ROOT_PATH') or exit('Access Denied!');
 
+/**
+ * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+ */
 class Image
 {
-	
-	
-	public function resize($filename,$max_size = 700)
-	{
-	
-		/** check what kind of file type it is **/
-		$type = mime_content_type($filename);
+    /**
+     * @param string $filename
+     * @param int $max_size
+     * @return string
+     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+     */
+    public function resize(string $filename, int $max_size = 700)
+    {
+        /** check what kind of file type it is **/
+        $type = mime_content_type($filename);
 
-		if(file_exists($filename))
-		{
-			switch ($type) {
+        if (file_exists($filename)) {
+            switch ($type) {
 
-				case 'image/png':
-					$image = imagecreatefrompng($filename);
-					break;
+                case 'image/png':
+                    $image = imagecreatefrompng($filename);
+                    break;
 
-				case 'image/gif':
-					$image = imagecreatefromgif($filename);
-					break;
-				
-				case 'image/jpeg':
-					$image = imagecreatefromjpeg($filename);
-					break;
-				
-				case 'image/webp':
-					$image = imagecreatefromwebp($filename);
-					break;
-				
-				default:
-					return $filename;
-					break;
-			}
+                case 'image/gif':
+                    $image = imagecreatefromgif($filename);
+                    break;
 
-			$src_w = imagesx($image);
-			$src_h = imagesy($image);
+                case 'image/jpeg':
+                    $image = imagecreatefromjpeg($filename);
+                    break;
 
-		    if($src_w > $src_h)
-		    {
-		      //reduce max size if image is smaller
-		      if($src_w < $max_size)
-		      {
-		        $max_size = $src_w;
-		      }
+                case 'image/webp':
+                    $image = imagecreatefromwebp($filename);
+                    break;
 
-		      $dst_w = $max_size;
-		      $dst_h = ($src_h / $src_w) * $max_size;
-		    }else{
+                default:
+                    return $filename;
+                    break;
+            }
 
-		      //reduce max size if image is smaller
-		      if($src_h < $max_size)
-		      {
-		        $max_size = $src_h;
-		      }
+            $src_w = imagesx($image);
+            $src_h = imagesy($image);
 
-		      $dst_w = ($src_w / $src_h) * $max_size;
-		      $dst_h = $max_size;
-		    }
+            if ($src_w > $src_h) {
+                //reduce max size if image is smaller
+                if ($src_w < $max_size) {
+                    $max_size = $src_w;
+                }
 
-		    $dst_w = round($dst_w); 
-		    $dst_h = round($dst_h);
-		    
-			$dst_image = imagecreatetruecolor($dst_w, $dst_h);
+                $dst_w = $max_size;
+                $dst_h = ($src_h / $src_w) * $max_size;
+            } else {
 
-			if($type == 'image/png')
-			{
+                //reduce max size if image is smaller
+                if ($src_h < $max_size) {
+                    $max_size = $src_h;
+                }
 
-				imagealphablending($dst_image, false);
-				imagesavealpha($dst_image, true );
-			}
+                $dst_w = ($src_w / $src_h) * $max_size;
+                $dst_h = $max_size;
+            }
 
-			imagecopyresampled($dst_image, $image, 0, 0, 0, 0, $dst_w, $dst_h, $src_w, $src_h);
+            $dst_w = round($dst_w);
+            $dst_h = round($dst_h);
 
-			imagedestroy($image);
+            $dst_image = imagecreatetruecolor($dst_w, $dst_h);
 
-			switch ($type) {
+            if ($type == 'image/png') {
 
-				case 'image/png':
-					imagepng($dst_image,$filename,8);
-					break;
+                imagealphablending($dst_image, false);
+                imagesavealpha($dst_image, true);
+            }
 
-				case 'image/gif':
-					imagegif($dst_image,$filename);
-					break;
-				
-				case 'image/jpeg':
-					imagejpeg($dst_image,$filename,90);
-					break;
-				
-				case 'image/webp':
-					imagewebp($dst_image,$filename,90);
-					break;
-				
-				default:
-					imagejpeg($dst_image,$filename,90);
-					break;
-			}
+            imagecopyresampled($dst_image, $image, 0, 0, 0, 0, $dst_w, $dst_h, $src_w, $src_h);
 
-			imagedestroy($dst_image);
-		}
+            imagedestroy($image);
 
-		return $filename;
-	}
-	
-	
-	public function crop($filename,$max_width = 700,$max_height = 700)
-	{
-	
-		/** check what kind of file type it is **/
-		$type = mime_content_type($filename);
+            switch ($type) {
 
-		if(file_exists($filename))
-		{
-			$imagefunc = 'imagecreatefromjpeg';
+                case 'image/png':
+                    imagepng($dst_image, $filename, 8);
+                    break;
 
-			switch ($type) {
+                case 'image/gif':
+                    imagegif($dst_image, $filename);
+                    break;
 
-				case 'image/png':
-					$image = imagecreatefrompng($filename);
-					$imagefunc = 'imagecreatefrompng';
-					break;
+                case 'image/jpeg':
+                    imagejpeg($dst_image, $filename, 90);
+                    break;
 
-				case 'image/gif':
-					$image = imagecreatefromgif($filename);
-					$imagefunc = 'imagecreatefromgif';
-					break;
-				
-				case 'image/jpeg':
-					$image = imagecreatefromjpeg($filename);
-					$imagefunc = 'imagecreatefromjpeg';
-					break;
-				
-				case 'image/webp':
-					$image = imagecreatefromwebp($filename);
-					$imagefunc = 'imagecreatefromwebp';
-					break;
-				
-				default:
-					return $filename;
-					break;
-			}
+                case 'image/webp':
+                    imagewebp($dst_image, $filename, 90);
+                    break;
 
-			$src_w = imagesx($image);
-			$src_h = imagesy($image);
+                default:
+                    imagejpeg($dst_image, $filename, 90);
+                    break;
+            }
 
-			if($max_width > $max_height)
-			{
-				if($src_w > $src_h)
-				{
-					$max = $max_width;
-				}else{
-					$max = ($src_h / $src_w) * $max_width;
-				}
-			}else
-			{
-				if($src_w > $src_h)
-				{
-					$max = ($src_w / $src_h) * $max_height;
-				}else{
-					$max = $max_height;
-				}
-			}
+            imagedestroy($dst_image);
+        }
 
-			$this->resize($filename,$max);
- 
-			$image = $imagefunc($filename);
-
-			$src_w = imagesx($image);
-			$src_h = imagesy($image);
-
-			$src_x = 0;
-			$src_y = 0;
- 			if($max_width > $max_height)
-			{
-				$src_y = round(($src_h - $max_height) / 2);
-			}else
-			{
-				$src_x = round(($src_w - $max_width) / 2);
-			}
-
-			$dst_image = imagecreatetruecolor($max_width, $max_height);
-
-			if($type == 'image/png')
-			{
-				imagealphablending($dst_image, false);
-				imagesavealpha($dst_image, true );
-			}
-
-			imagecopyresampled($dst_image, $image, 0, 0, $src_x, $src_y, $max_width, $max_height, $max_width, $max_height);
-			imagedestroy($image);
-
-			switch ($type) {
-
-				case 'image/png':
-					imagepng($dst_image,$filename,8);
-					break;
-
-				case 'image/gif':
-					imagegif($dst_image,$filename);
-					break;
-				
-				case 'image/jpeg':
-					imagejpeg($dst_image,$filename,90);
-					break;
-				
-				case 'image/webp':
-					imagewebp($dst_image,$filename,90);
-					break;
-				
-				default:
-					imagejpeg($dst_image,$filename,90);
-					break;
-			}
-
-			imagedestroy($dst_image);
-		}
-
-		return $filename;
-	}
+        return $filename;
+    }
 
 
-	public function getThumbnail($filename, $max_width = 700, $max_height = 700)
-	{
+    /**
+     * @param string $filename
+     * @param int $max_width
+     * @param int $max_height
+     * @return string
+     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+     */
+    public function crop(string $filename, int $max_width = 700, int $max_height = 700)
+    {
+        /** check what kind of file type it is **/
+        $type = mime_content_type($filename);
 
-		if(file_exists($filename))
-		{
-			$ext = explode(".", $filename);
-			$ext = end($ext);
+        if (file_exists($filename)) {
+            $imagefunc = 'imagecreatefromjpeg';
 
-			$dest = preg_replace("/\.{$ext}$/", '_thumbnail.'.$ext, $filename);
+            switch ($type) {
 
-			if(file_exists($dest))
-			{
-				return $dest;
-			}
-			
-			copy($filename, $dest);
-			$this->crop($dest,$max_width,$max_height);
+                case 'image/png':
+                    $image = imagecreatefrompng($filename);
+                    $imagefunc = 'imagecreatefrompng';
+                    break;
 
-			$filename = $dest;
-		}
+                case 'image/gif':
+                    $image = imagecreatefromgif($filename);
+                    $imagefunc = 'imagecreatefromgif';
+                    break;
 
-		return $filename;
-	}
+                case 'image/jpeg':
+                    $image = imagecreatefromjpeg($filename);
+                    $imagefunc = 'imagecreatefromjpeg';
+                    break;
+
+                case 'image/webp':
+                    $image = imagecreatefromwebp($filename);
+                    $imagefunc = 'imagecreatefromwebp';
+                    break;
+
+                default:
+                    return $filename;
+                    break;
+            }
+
+            $src_w = imagesx($image);
+            $src_h = imagesy($image);
+
+            if ($max_width > $max_height) {
+                if ($src_w > $src_h) {
+                    $max = $max_width;
+                } else {
+                    $max = ($src_h / $src_w) * $max_width;
+                }
+            } else {
+                if ($src_w > $src_h) {
+                    $max = ($src_w / $src_h) * $max_height;
+                } else {
+                    $max = $max_height;
+                }
+            }
+
+            $this->resize($filename, $max);
+
+            $image = $imagefunc($filename);
+
+            $src_w = imagesx($image);
+            $src_h = imagesy($image);
+
+            $src_x = 0;
+            $src_y = 0;
+            if ($max_width > $max_height) {
+                $src_y = round(($src_h - $max_height) / 2);
+            } else {
+                $src_x = round(($src_w - $max_width) / 2);
+            }
+
+            $dst_image = imagecreatetruecolor($max_width, $max_height);
+
+            if ($type == 'image/png') {
+                imagealphablending($dst_image, false);
+                imagesavealpha($dst_image, true);
+            }
+
+            imagecopyresampled($dst_image, $image, 0, 0, $src_x, $src_y, $max_width, $max_height, $max_width, $max_height);
+            imagedestroy($image);
+
+            switch ($type) {
+                case 'image/png':
+                    imagepng($dst_image, $filename, 8);
+                    break;
+
+                case 'image/gif':
+                    imagegif($dst_image, $filename);
+                    break;
+
+                case 'image/jpeg':
+                    imagejpeg($dst_image, $filename, 90);
+                    break;
+
+                case 'image/webp':
+                    imagewebp($dst_image, $filename, 90);
+                    break;
+
+                default:
+                    imagejpeg($dst_image, $filename, 90);
+                    break;
+            }
+
+            imagedestroy($dst_image);
+        }
+
+        return $filename;
+    }
+
+
+    /**
+     * @param string $filename
+     * @param int $max_width
+     * @param int $max_height
+     * @return array|string|string[]|null
+     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+     */
+    public function getThumbnail(string $filename, int $max_width = 700, int $max_height = 700)
+    {
+        if (file_exists($filename)) {
+            $ext = explode(".", $filename);
+            $ext = end($ext);
+
+            $dest = preg_replace("/\.{$ext}$/", '_thumbnail.' . $ext, $filename);
+
+            if (file_exists($dest)) {
+                return $dest;
+            }
+
+            copy($filename, $dest);
+            $this->crop($dest, $max_width, $max_height);
+
+            $filename = $dest;
+        }
+
+        return $filename;
+    }
 }

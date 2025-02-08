@@ -15,7 +15,6 @@ class User
     protected $loginUniqueColumn = 'email';
 
     protected $allowedColumns = [
-
         'username',
         'email',
         'password',

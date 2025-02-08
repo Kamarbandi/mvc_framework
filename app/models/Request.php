@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 /**
  * Request class
@@ -7,96 +7,101 @@
 
 namespace Core;
 
-defined('ROOT_PATH') OR exit('Access Denied!');
+defined('ROOT_PATH') or exit('Access Denied!');
 
+/**
+ * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+ */
 class Request
 {
-	
-	/** check which post method was used **/
-	public function method():string
-	{
-		return $_SERVER['REQUEST_METHOD'];
-	}
+    /**
+     * @return string
+     */
+    public function method(): string
+    {
+        return $_SERVER['REQUEST_METHOD'];
+    }
 
-	/** check if something was posted **/
-	public function posted():bool
-	{
-		if($_SERVER['REQUEST_METHOD'] == "POST" && count($_POST) > 0)
-		{
-			return true;
-		}
+    /**
+     * @return bool
+     */
+    public function posted(): bool
+    {
+        if ($_SERVER['REQUEST_METHOD'] == "POST" && count($_POST) > 0) {
+            return true;
+        }
 
-		return false;
-	}
+        return false;
+    }
 
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function post(string $key = '', mixed $default = ''): mixed
+    {
+        if (empty($key)) {
+            return $_POST;
+        } else if (isset($_POST[$key])) {
+            return $_POST[$key];
+        }
 
-	/** get a value from the POST variable **/
-	public function post(string $key = '', mixed $default = ''):mixed
-	{
+        return $default;
+    }
 
-		if(empty($key))
-		{
-			return $_POST;
-		}else
-		if(isset($_POST[$key]))
-		{
-			return $_POST[$key];
-		}
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function files(string $key = '', mixed $default = ''): mixed
+    {
+        if (empty($key)) {
+            return $_FILES;
+        } else if (isset($_FILES[$key])) {
+            return $_FILES[$key];
+        }
 
-		return $default;
-	}
+        return $default;
+    }
 
-	/** get a value from the FILES variable **/
-	public function files(string $key = '', mixed $default = ''):mixed
-	{
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function get(string $key = '', mixed $default = ''): mixed
+    {
+        if (empty($key)) {
+            return $_GET;
+        } else if (isset($_GET[$key])) {
+            return $_GET[$key];
+        }
 
-		if(empty($key))
-		{
-			return $_FILES;
-		}else
-		if(isset($_FILES[$key]))
-		{
-			return $_FILES[$key];
-		}
+        return $default;
+    }
 
-		return $default;
-	}
+    /**
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function input(string $key, mixed $default = ''): mixed
+    {
+        if (isset($_REQUEST[$key])) {
+            return $_REQUEST[$key];
+        }
 
-	/** get a value from the GET variable **/
-	public function get(string $key = '', mixed $default = ''):mixed
-	{
+        return $default;
+    }
 
-		if(empty($key))
-		{
-			return $_GET;
-		}else
-		if(isset($_GET[$key]))
-		{
-			return $_GET[$key];
-		}
-
-		return $default;
-	}
-
-	/** get a value from the REQUEST variable **/
-	public function input(string $key, mixed $default = ''):mixed
-	{
-
-		if(isset($_REQUEST[$key]))
-		{
-			return $_REQUEST[$key];
-		}
-
-		return $default;
-	}
-
-	/** get all values from the REQUEST variable **/
-	public function all():mixed
-	{
-
-		return $_REQUEST;
-
-	}
-
-
+    /**
+     * @return mixed
+     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
+     */
+    public function all(): mixed
+    {
+        return $_REQUEST;
+    }
 }

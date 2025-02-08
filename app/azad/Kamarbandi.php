@@ -272,13 +272,13 @@ class Kamarbandi
     public function migrate($argv)
     {
         $command = $argv[1] ?? null;
-        $filename = $argv[2] ?? null;
+        $fileName = $argv[2] ?? null;
 
-        $filename = "app" . DIRSEP . "migrations" . DIRSEP . $filename;
-        if (file_exists($filename)) {
-            require $filename;
+        $fileName = "app" . DIRSEP . "migrations" . DIRSEP . $fileName;
+        if (file_exists($fileName)) {
+            require $fileName;
 
-            preg_match("/[a-zA-Z]+\.php$/", $filename, $match);
+            preg_match("/[a-zA-Z]+\.php$/", $fileName, $match);
             $classname = str_replace(".php", "", $match[0]);
 
             $myclass = new ("\Kamarbandi\\$classname")();
@@ -305,7 +305,7 @@ class Kamarbandi
             die("\n\rMigration file could not be found\n\r");
         }
 
-        echo "\n\rMigration file run successfully: " . basename($filename) . " \n\r";
+        echo "\n\rMigration file run successfully: " . basename($fileName) . " \n\r";
     }
 
     public function help()
