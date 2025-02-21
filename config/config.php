@@ -4,22 +4,22 @@
 
 if ((empty($_SERVER['SERVER_NAME']) && php_sapi_name() == 'cli') || (!empty($_SERVER['SERVER_NAME']) && $_SERVER['SERVER_NAME'] == 'localhost')) {
     /** database config **/
-    define('DB_NAME', 'apo_group');
+    define('DB_NAME', 'db_name');
     define('DB_HOST', 'localhost');
     define('DB_USER', 'root');
     define('DB_PASS', '');
     define('DB_DRIVER', '');
 
-    define('ROOT', 'http://apogroup.de');
+    define('ROOT', 'http://your_domain.de');
 
 } else {
-    define('DB_NAME', 'apo_group');
+    define('DB_NAME', 'db_name');
     define('DB_HOST', 'localhost');
     define('DB_USER', 'root');
     define('DB_PASS', '');
     define('DB_DRIVER', '');
 
-    define('ROOT', 'http://apogroup.de');
+    define('ROOT', 'http://your_domain.de');
 }
 
 define('APP_NAME', "Give here name of application");
