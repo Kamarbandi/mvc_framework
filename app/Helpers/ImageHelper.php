@@ -1,18 +1,86 @@
 <?php
 
-/**
- * Image manipulation class
- */
+namespace App\Helpers;
 
-namespace Model;
+use Exception;
 
-defined('ROOT_PATH') or exit('Access Denied!');
+class ImageHelper {
+    public static function upload($file) {
+            if (!isset($file['tmp_name']) || empty($file['tmp_name'])) {
+                throw new \Exception("Uploaded file is not valid");
+            }
 
-/**
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
- */
-class Image
-{
+            $image = $file['tmp_name'];
+
+            list($width, $height) = getimagesize($image);
+            $maxSize = 800;
+
+            if ($width > $maxSize || $height > $maxSize) {
+                $ratio = min($maxSize / $width, $maxSize / $height);
+                $newWidth = $width * $ratio;
+                $newHeight = $height * $ratio;
+
+                $src = imagecreatefromstring(file_get_contents($image));
+                $dst = imagecreatetruecolor($newWidth, $newHeight);
+
+                imagecopyresampled($dst, $src, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+                ob_start();
+                imagejpeg($dst);
+                $imageData = ob_get_clean();
+
+                imagedestroy($src);
+                imagedestroy($dst);
+            } else {
+                $imageData = file_get_contents($image);
+            }
+
+            return $imageData;
+    }
+
+
+    public static function processImage($file) {
+        $maxWidth = 800;
+        $maxHeight = 800;
+
+        $imageInfo = getimagesize($file['tmp_name']);
+        $originalWidth = $imageInfo[0];
+        $originalHeight = $imageInfo[1];
+        $imageType = $imageInfo[2];
+
+        if ($imageType === IMAGETYPE_JPEG) {
+            $image = imagecreatefromjpeg($file['tmp_name']);
+        } elseif ($imageType === IMAGETYPE_PNG) {
+            $image = imagecreatefrompng($file['tmp_name']);
+        } else {
+            throw new Exception('Unsupported image type');
+        }
+
+        $ratio = min($maxWidth / $originalWidth, $maxHeight / $originalHeight);
+        $newWidth = round($originalWidth * $ratio);
+        $newHeight = round($originalHeight * $ratio);
+
+        $newImage = imagecreatetruecolor($newWidth, $newHeight);
+
+        imagecopyresampled($newImage, $image, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
+
+        $fileName = uniqid() . '.jpg';
+
+        $rootDirectory = dirname(__DIR__, 2);
+        $filePath = $rootDirectory . '/storage/images/' . $fileName;
+
+        if (!file_exists($rootDirectory . '/storage/images')) {
+            mkdir($rootDirectory . '/storage/images', 0777, true);
+        }
+
+        imagejpeg($newImage, $filePath, 90);
+
+        imagedestroy($image);
+        imagedestroy($newImage);
+
+        return $filePath;
+    }
+
     /**
      * @param string $filename
      * @param int $max_size
