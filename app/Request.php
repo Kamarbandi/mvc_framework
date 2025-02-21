@@ -1,19 +1,19 @@
 <?php
 
-/**
- * Request class
- * Gets and sets data in the POST and GET global variables
- */
+namespace App;
 
-namespace Core;
-
-defined('ROOT_PATH') or exit('Access Denied!');
-
-/**
- * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
- */
 class Request
 {
+    protected array $jsonData = [];
+
+    public function __construct()
+    {
+        // If the request Content-Type is JSON, we try to decode the request body
+        if ($this->isJson()) {
+            $this->jsonData = json_decode(file_get_contents('php://input'), true) ?? [];
+        }
+    }
+
     /**
      * @return string
      */
@@ -27,11 +27,7 @@ class Request
      */
     public function posted(): bool
     {
-        if ($_SERVER['REQUEST_METHOD'] == "POST" && count($_POST) > 0) {
-            return true;
-        }
-
-        return false;
+        return $this->method() === "POST" && (count($_POST) > 0 || !empty($this->jsonData));
     }
 
     /**
@@ -41,13 +37,15 @@ class Request
      */
     public function post(string $key = '', mixed $default = ''): mixed
     {
+        // First, we look for data in a regular POST
         if (empty($key)) {
-            return $_POST;
+            return $_POST ?: $this->jsonData;
         } else if (isset($_POST[$key])) {
             return $_POST[$key];
         }
 
-        return $default;
+        // If you didn't find it in POST, look in JSON
+        return $this->jsonData[$key] ?? $default;
     }
 
     /**
@@ -89,19 +87,22 @@ class Request
      */
     public function input(string $key, mixed $default = ''): mixed
     {
-        if (isset($_REQUEST[$key])) {
-            return $_REQUEST[$key];
-        }
-
-        return $default;
+        return $_REQUEST[$key] ?? $this->jsonData[$key] ?? $default;
     }
 
     /**
      * @return mixed
-     * @author Azad Kamarbandi <azadkamarbandi@gmail.com>
      */
     public function all(): mixed
     {
-        return $_REQUEST;
+        return array_merge($_REQUEST, $this->jsonData);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isJson(): bool
+    {
+        return isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false;
     }
 }

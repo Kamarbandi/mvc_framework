@@ -1,20 +1,15 @@
-<?php 
+<?php
 
-session_start();
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
-/**  Valid PHP Version? **/
 $minPHPVersion = '8.0';
 if (phpversion() < $minPHPVersion)
 {
-	die("Your PHP version must be {$minPHPVersion} or higher to run this app. Your current version is " . phpversion());
+    die("Your PHP version must be {$minPHPVersion} or higher to run this app. Your current version is " . phpversion());
 }
 
-/**  Path to this file **/
-define('ROOT_PATH', __DIR__ . DIRECTORY_SEPARATOR);
+session_start();
 
-require "../app/core/init.php";
-
-DEBUG ? ini_set('display_errors', 1) : ini_set('display_errors', 0);
-
-$app = new App;
-$app->loadController();
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../routes/api.php';

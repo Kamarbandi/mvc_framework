@@ -9,5 +9,5 @@ defined('CPATH') OR exit('Access Denied!');
  */
 class Database
 {
-	use \Model\Database;
+	use \App\Database;
 }

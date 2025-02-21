@@ -1,6 +1,6 @@
 <?php 
 
-defined('ROOT_PATH') OR exit('Access Denied!');
+//defined('ROOT_PATH') OR exit('Access Denied!');
 
 spl_autoload_register(function($classname){
 

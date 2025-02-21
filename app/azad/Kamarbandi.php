@@ -2,14 +2,12 @@
 
 namespace Kamarbandi;
 
-defined('CPATH') or exit('Access Denied!');
-
 /**
  * Kamarbandi class
  */
 class Kamarbandi
 {
-    private $version = '1.0.3';
+    private $version = '1.0.0';
 
     /**
      * @param $argv
@@ -191,7 +189,7 @@ class Kamarbandi
      */
     private function createController(string $classname)
     {
-        $fileName = 'app' . DIRSEP . 'controllers' . DIRSEP . ucfirst($classname) . ".php";
+        $fileName = 'app' .DIRSEP. 'Http' . DIRSEP . 'Controllers' . DIRSEP . ucfirst($classname) . ".php";
 
         if (file_exists($fileName)) {
             die("Controller '$classname' already exists.");
@@ -214,7 +212,7 @@ class Kamarbandi
      */
     private function createModel(string $classname)
     {
-        $fileName = 'app' . DIRSEP . 'models' . DIRSEP . ucfirst($classname) . ".php";
+        $fileName = 'app' . DIRSEP . 'Models' . DIRSEP . ucfirst($classname) . ".php";
 
         if (file_exists($fileName)) {
             die("Model '$classname' already exists.");
@@ -312,8 +310,8 @@ class Kamarbandi
     {
         echo "
 
-    Kamarbandi v$this->version Command Line Tool
-
+    Apo.com Group v$this->version Command Line Tool
+    
     Database
       db:create          Initializes a new database schema.
       db:seed            Executes the specified seeder to populate the database with known data.

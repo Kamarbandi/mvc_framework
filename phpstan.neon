@@ -1,0 +1,13 @@
+parameters:
+    level: 0
+    paths:
+        - app
+    excludePaths:
+        - tests/*
+        - public/*
+        - routes/*
+        - app/azad/*
+        - app/migrations/*
+        - app/views/*
+
+    reportUnmatchedIgnoredErrors: false

@@ -1,15 +1,12 @@
 <?php
 
-namespace Model;
-
-defined('ROOT_PATH') OR exit('Access Denied!');
+namespace App\Models;
 
 /**
  * {CLASSNAME} class
  */
 class {CLASSNAME}
 {
-	
 	use Model;
 
 	protected $table = '{table}';
@@ -17,7 +14,6 @@ class {CLASSNAME}
 	protected $loginUniqueColumn = 'email';
 
 	protected $allowedColumns = [
-
 		'username',
 		'email',
 		'password',
@@ -38,7 +34,6 @@ class {CLASSNAME}
 	 * 
 	 ****************************/
 	protected $validationRules = [
-
 		'email' => [
 			'email',
 			'unique',
@@ -54,4 +49,11 @@ class {CLASSNAME}
 		],
 	];
 
+    protected $onInsertValidationRules = [
+
+    ];
+
+    protected $onUpdateValidationRules = [
+
+    ];
 }

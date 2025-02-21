@@ -1,12 +1,6 @@
 {
-  "name": "Custom PHP framework",
-  "description": "A PHP-based RESTful API for storing and managing medications.",
-  "authors": [
-    {
-      "name": "Azad Kamarbandi",
-      "email": "azadkamarbandi@gmail.com"
-    }
-  ],
+  "name": "Framework",
+  "description": "Simple framework.",
   "type": "project",
   "require": {
     "php": ">=8.0",

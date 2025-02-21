@@ -2,19 +2,19 @@
 
 namespace Kamarbandi;
 
-defined('CPATH') or exit('Access Denied!');
 
 /**
  * Migration class
  */
 class Migration
 {
-    use \Model\Database;
+    use \App\Database;
 
     protected $columns = [];
     protected $keys = [];
     protected $primaryKeys = [];
     protected $uniqueKeys = [];
+    protected $foreignKeys = [];
     protected $data = [];
 
     protected function createTable($table)
@@ -39,6 +39,12 @@ class Migration
                 $query .= "KEY (" . $key . "),";
             }
 
+            foreach ($this->foreignKeys as $foreignKey) {
+                $query .= "FOREIGN KEY (" . $foreignKey['column'] . ") REFERENCES "
+                    . $foreignKey['reference_table'] . "(" . $foreignKey['reference_column'] . ") "
+                    . $foreignKey['on_delete'] . ",";
+            }
+
             $query = trim($query, ",");
             $query .= ") ENGINE=InnoDB DEFAULT CHARSET=utf8mb4";
 
@@ -48,10 +54,10 @@ class Migration
             $this->keys = [];
             $this->primaryKeys = [];
             $this->uniqueKeys = [];
+            $this->foreignKeys = [];
 
             echo "\n\r Table $table successfully created! \n\r";
         } else {
-
             echo "\n\r Table $table could not be created! \n\r";
         }
     }
@@ -69,6 +75,16 @@ class Migration
     protected function addUniqueKey($key)
     {
         $this->uniqueKeys[] = $key;
+    }
+
+    protected function addForeignKey($column, $reference_table, $reference_column, $on_delete = 'ON DELETE CASCADE')
+    {
+        $this->foreignKeys[] = [
+            'column' => $column,
+            'reference_table' => $reference_table,
+            'reference_column' => $reference_column,
+            'on_delete' => $on_delete
+        ];
     }
 
     protected function addData($key, $value)

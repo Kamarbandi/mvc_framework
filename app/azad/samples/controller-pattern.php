@@ -1,20 +1,13 @@
-<?php 
+<?php
 
-namespace Controller;
-
-defined('ROOT_PATH') OR exit('Access Denied!');
+namespace App\Http\Controllers;
 
 /**
  * {CLASSNAME} class
  */
-class {CLASSNAME}
+class {CLASSNAME} extends Controller
 {
-	use MainController;
-
 	public function index()
 	{
-
-		$this->view('{classname}');
 	}
-
 }

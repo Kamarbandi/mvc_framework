@@ -1,12 +1,11 @@
 <?php
 
-namespace Model;
+namespace App;
 
-defined('ROOT_PATH') or exit('Access Denied!');
+use App\Helpers\ErrorLogger;
 
 trait Database
 {
-
     /**
      * Establishes a connection to the database using PDO.
      *
@@ -26,6 +25,7 @@ trait Database
             return $pdo;
         } catch (\PDOException $e) {
             // Log error or handle it appropriately
+            ErrorLogger::logException($e);
             exit("Database connection failed: " . $e->getMessage());
         }
     }
@@ -71,5 +71,3 @@ trait Database
         return false;
     }
 }
-
-

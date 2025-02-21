@@ -2,17 +2,13 @@
 
 namespace Kamarbandi;
 
-defined('ROOT_PATH') OR exit('Access Denied!');
-
 /**
  * {CLASSNAME} class
  */
 class {CLASSNAME} extends Migration
 {
-	
 	public function up()
 	{
-
 		/** create a table **/
 		$this->addColumn('id int(11) NOT NULL AUTO_INCREMENT');
 		$this->addColumn('date_created datetime NULL');
@@ -21,6 +17,11 @@ class {CLASSNAME} extends Migration
 		/*
 		$this->addUniqueKey();
 		*/
+
+        /*
+		$this->$this->addForeignKey();
+		*/
+
 		$this->createTable('{classname}');
 
 		/** insert data **/
